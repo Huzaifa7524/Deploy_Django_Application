@@ -18,7 +18,7 @@ Social: [Github](https://github.com/Huzaifa7524) | [Linkedin](https://www.linked
 
 3. Download the .pem key and connect it with an SSH client using the CMD terminal:
 
-```shell
+```bash
 ssh -i "ABC.pem" ubuntu@ec2-0-0-0-0.us-west-1.compute.amazonaws.com
 ```
 
@@ -26,20 +26,20 @@ ssh -i "ABC.pem" ubuntu@ec2-0-0-0-0.us-west-1.compute.amazonaws.com
 
 ### 1. update  the linux system  and libraries
 
-```shell
+```bash
 sudo apt update
 sudo apt upgrade
 ```
 
 ### 2. Install Python and pip
 
-```shell
+```bash
 sudo apt install python3-pip
 ```
 
 ### 3. Install Virtual env
 
-```shell 
+```bash
 sudo apt install python3-virtualenv
 # how to create virtualenv?
 virtualenv [ Name of env ]
@@ -50,14 +50,14 @@ source myenv/bin/activate
 
 ### 4. Clone Github Repo
 
-```shell
+```bash
 git clone [URL]
 # Then, use 'cd' to enter inside your code directory. 
 ```
 
 ### 5. Requirements.txt
 
-```shell
+```bash
 # How to create Requirements.txt?
 pip3 freeze > requirements.txt
 # how to Install Requirements.txt?
@@ -66,7 +66,7 @@ pip3 install -r requirements.txt
 
 ### 6. Install Some Libraires
 
-```shell
+```bash
 # To install Nginx server 
 sudo apt install nginx
 #  Installing Django and gunicorn
@@ -78,7 +78,7 @@ pip install django gunicorn
 
  - Add your IP address or domain to the `ALLOWED_HOSTS` variable in settings.py.
 
-```shell
+```bash
 # If you have any migrations to run, perform the action:
 python manage.py makemigrations
 python manage.py migrate
@@ -86,7 +86,7 @@ python manage.py migrate
 
 ### 8. Collect Static Files
 
-```shell
+```bash
 python manage.py collectstatic
 ```
 
@@ -116,7 +116,7 @@ MEDIA_URL = '/media/'
 
 ### 10. Install whitenoise
 
-```shell
+```bash
 pip install whitenoise
 ```
 
@@ -124,13 +124,13 @@ pip install whitenoise
 
 ### 1. Create a system socket file for gunicorn
 
-```shell
+```bash
 sudo vim /etc/systemd/system/gunicorn.socket
 ```
 
 Paste the contents below and save the file
 
-```Shell
+```bash
 [Unit]
 Description=gunicorn socket
 [Socket]
@@ -141,13 +141,13 @@ WantedBy=sockets.target
 
 ### 2. Create a service file for gunicorn
 
-```shell
+```bash
 sudo vim /etc/systemd/system/gunicorn.service
 ```
 
 Paste the contents below inside this file:
 
-```Shell
+```bash
 [Unit]
 Description=gunicorn daemon
 Requires=gunicorn.socket
@@ -169,13 +169,13 @@ WantedBy=multi-user.target
 
 ### 3. start and enable the gunicorn socket
 
-```shell
+```bash
 sudo systemctl start gunicorn.socket
 sudo systemctl enable gunicorn.socket
 ```
 
 ### 4. check if already a file exists Then Remove it Like [defalut].
-```shell
+```bash
 cd /etc/nginx/sites-enabled/
 # remove this 
 sudo rm -rf defalut
@@ -187,13 +187,13 @@ sudo rm -rf defalut
 
 ### 1. Deactivate the virtual environment 
 
-```shell
+```bash
 deactivate
 ```
 
 ### 2. Create a configuration file for Nginx
 
-```shell
+```bash
 # change name accourding to your app and also leave it same.
 # sudo vim /etc/nginx/sites-available/[Your app Name]
 sudo vim /etc/nginx/sites-available/AI
@@ -201,7 +201,7 @@ sudo vim /etc/nginx/sites-available/AI
 
 Paste the below contents inside the file created
 
-```shell
+```bash
 server {
     listen 80 default_server;
     server_name _;
@@ -220,14 +220,14 @@ server {
 
 ### 3. Activate the configuration
 
-```shell
+```bash
 # sudo ln -s /etc/nginx/sites-available/[your app nam] /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/AI /etc/nginx/sites-enabled/
 ```
 
 ### 4. Run this command to load a static file
 
-```shell
+```bash
 # change user name but my username is ubuntu
 sudo gpasswd -a www-data ubuntu
 # sudo gpasswd -a www-data [username]
@@ -235,47 +235,56 @@ sudo gpasswd -a www-data ubuntu
 
 ### 5. Restart nginx and allow the changes to take place.
 
-```shell
+```bash
 sudo systemctl restart nginx
 ```
 
 ### 6. Activate the virtualenv 
 
-```shell 
+```bash 
 source myenv/bin/activate
 ```
 and goto your working dir.
 
 ### 7. restart  gunicorn and nginx
 
-```shell
+```bash
 sudo service gunicorn restart
 sudo service nginx restart
 ```
 
 ### 8. to Reload daemon
 
-```shell
+```bash
 sudo systemctl daemon-reload
 sudo systemctl restart gunicorn
 ```
 
 ### 9. Check the status of Nginx to ensure it's running without errors
 
-```shell
+```bash
 sudo systemctl status nginx.service
 ```
 
 ### 10. Additionally in case of errors
 
 - To check error logs
-```shell
+```bash
 sudo tail -f /var/log/nginx/error.log
 ```
 
 - To check nginx working fine
-```shell
+```bash
 sudo systemctl status nginx
 ```
 
+#
+### Configure SSL 
+#
+### 1. Using OpenSSL create these certificates
 
+```bash
+sudo mkdir /etc/ssl/private
+sudo chmod 700 /etc/ssl/private
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+```
